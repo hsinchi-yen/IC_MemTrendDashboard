@@ -15,57 +15,38 @@ async def ingest_memory_quotes(db: AsyncSession, trigger: str = "manual", from_c
             rows = _rows_from_csv(Path(from_csv))
         else:
             parsed = await fetch_memory_quote_tables()
-            rows = _rows_from_tables(parsed.get("tables", []))
+            rows = _rows_from_quotes(parsed.get("quotes", []))
         inserted = await upsert_memory_quotes(db, rows)
-        await finish_source_run(db, run, "success", inserted, inserted, 0)
-        return {"status": "success", "row_count": inserted}
+        status = "success" if inserted else "empty"
+        await finish_source_run(db, run, status, inserted, inserted, 0)
+        return {"status": status, "row_count": inserted}
     except Exception as exc:  # noqa: BLE001
         await finish_source_run(db, run, "fail", 0, 0, 1, str(exc))
         return {"status": "fail", "error": str(exc)}
 
 
-def _rows_from_tables(tables: list[dict]) -> list[dict]:
+def _rows_from_quotes(quotes: list[dict]) -> list[dict]:
+    """Map parser output (real prices) into MemoryQuote upsert rows."""
     today = date.today()
+    now = datetime.now(timezone.utc)
     rows = []
-    for table in tables:
-        name = table.get("table_name", "Unknown")
-        category = "DRAM" if "DRAM" in name.upper() else "NAND"
-        price_type = "spot" if "SPOT" in name.upper() else "module"
-        for sample in table.get("sample_data", []):
-            if not sample:
-                continue
-            product = sample[0]
-            rows.append(
-                {
-                    "product": product,
-                    "category": category,
-                    "price_type": price_type,
-                    "price_high": None,
-                    "price_low": None,
-                    "price_avg": None,
-                    "change_pct": None,
-                    "currency": "USD",
-                    "unit": None,
-                    "source": "dramexchange",
-                    "snapshot_date": today,
-                    "fetched_at": datetime.now(timezone.utc),
-                }
-            )
-    if not rows:
+    for q in quotes:
+        if not q.get("product"):
+            continue
         rows.append(
             {
-                "product": "DDR5 spot",
-                "category": "DRAM",
-                "price_type": "spot",
-                "price_high": None,
-                "price_low": None,
-                "price_avg": None,
-                "change_pct": None,
+                "product": q["product"],
+                "category": q.get("category", "DRAM"),
+                "price_type": q.get("price_type", "spot"),
+                "price_high": q.get("price_high"),
+                "price_low": q.get("price_low"),
+                "price_avg": q.get("price_avg"),
+                "change_pct": q.get("change_pct"),
                 "currency": "USD",
                 "unit": None,
                 "source": "dramexchange",
                 "snapshot_date": today,
-                "fetched_at": datetime.now(timezone.utc),
+                "fetched_at": now,
             }
         )
     return rows

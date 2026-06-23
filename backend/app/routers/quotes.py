@@ -72,6 +72,11 @@ async def quote_heatmap(db: AsyncSession = Depends(get_db)) -> list[dict]:
               changes[period] = round(((values[-1] - base) / base) * 100, 2) if base else None
           else:
               changes[period] = None
+        # Until enough daily snapshots accumulate to derive a 1D delta from
+        # history, fall back to the source-reported session change for 1D so
+        # the heatmap shows real movement immediately.
+        if changes["1D"] is None and latest.change_pct is not None:
+            changes["1D"] = round(float(latest.change_pct), 2)
         output.append(
             {
                 "id": product,

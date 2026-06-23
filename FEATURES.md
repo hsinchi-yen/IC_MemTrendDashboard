@@ -125,6 +125,39 @@ ECharts 力導向圖，節點依供應鏈層級（maker / equipment / backend-te
 
 ---
 
+## 三之二、真實資料來源（Real Data）
+
+本系統使用**真實市場資料**，非假資料：
+
+| 資料類型 | 真實來源 | 說明 |
+|----------|----------|------|
+| 股價日線 | **yfinance**（主）/ FinMind / Stooq / Alpha Vantage | 美/韓/日/台四市場 106 檔，約一年日線；yfinance 免 token 可直接抓 `.TW`/`.TWO`/`.KS`/`.KQ`/`.T` |
+| 記憶體報價 | **DRAMeXchange** 公開頁爬蟲 | DRAM Spot（DDR3/DDR4/DDR5）、Module、GDDR、NAND Wafer/Flash、Memory Card，含 high/low/avg/change% |
+| 牛熊分數 / 趨勢指標 | 由上述真實資料計算 | `compute_trend_metrics` / `compute_market_score` |
+
+> 記憶體報價解析器 `memory_quote_parser.py` 會擷取每列的真實高/低/均價與當日漲跌幅，**包含 DDR3**（例：`DDR3 4Gb 512Mx8 1600/1866` 均價 11.271、+1.07%）。DDR2 目前未列於 DRAMeXchange 公開頁，若來源恢復提供，解析器會自動納入。
+
+### 一鍵載入真實資料
+
+```bash
+# 啟動 PostgreSQL 後：
+$env:DATABASE_URL="postgresql+asyncpg://memdash:changeme@localhost:5432/memdash"
+$env:PYTHONPATH="backend"
+python scripts/data_import/load_real_data.py            # 全市場
+python scripts/data_import/load_real_data.py --markets US,TW --limit 6   # 快速驗證
+```
+此腳本會建表 → 灌入 106 檔標的 → 抓真實股價與報價 → 計算趨勢與分數 → 印出驗證摘要。
+
+### FinMind API Token（UI 設定）
+
+台股 / 美股可優先使用 FinMind。前端右上角 **「⚙ FinMind」** 按鈕可輸入個人 Token：
+
+- Token 儲存在瀏覽器 **localStorage**（key `finmind_token`），不寫入伺服器。
+- 每次 API 請求自動附帶 `X-FinMind-Token` 標頭；按「立即更新」時後端 `POST /api/refresh` 會讀取此標頭並用於 TW/US 抓取。
+- 留空則改用免費的 yfinance 來源，系統仍可正常運作。
+
+---
+
 ## 四、資料管線（每日自動排程）
 
 APScheduler 以 `Asia/Taipei` 時區運行兩個排程：

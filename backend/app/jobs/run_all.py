@@ -10,13 +10,16 @@ from app.jobs.ingest_tw_stocks import ingest_tw_stocks
 from app.jobs.ingest_us_stocks import ingest_us_stocks
 
 
-async def run_all_ingestion_jobs(trigger: str = "manual") -> dict:
+async def run_all_ingestion_jobs(trigger: str = "manual", finmind_token: str | None = None) -> dict:
     async with AsyncSessionLocal() as db:
         job = await acquire_refresh_lock(db, "daily_ingestion", trigger)
         if not job:
             return {"status": "skipped", "reason": "job_already_running"}
         results = {}
         try:
+            # TW/US ingestion can use a user-supplied FinMind token; the
+            # remaining jobs ignore the extra kwarg.
+            token_aware = {"tw", "us"}
             for name, func in [
                 ("tw", ingest_tw_stocks),
                 ("us", ingest_us_stocks),
@@ -25,7 +28,10 @@ async def run_all_ingestion_jobs(trigger: str = "manual") -> dict:
                 ("quotes", ingest_memory_quotes),
             ]:
                 await update_refresh_job(db, job, progress={"current_source": name})
-                results[name] = await func(db, trigger=trigger)
+                if name in token_aware:
+                    results[name] = await func(db, trigger=trigger, finmind_token=finmind_token)
+                else:
+                    results[name] = await func(db, trigger=trigger)
             await update_refresh_job(db, job, progress={"current_source": "trend_metrics"})
             results["trend_metrics"] = await compute_trend_metrics(db)
             await update_refresh_job(db, job, progress={"current_source": "market_score"})

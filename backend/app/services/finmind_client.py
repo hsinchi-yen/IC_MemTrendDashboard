@@ -301,6 +301,7 @@ async def fetch_finmind(
     data_id: str,
     start_date: date,
     end_date: date,
+    token: str | None = None,
 ) -> list[dict[str, Any]]:
     """Module-level helper used by legacy job code.
 
@@ -308,20 +309,27 @@ async def fetch_finmind(
     ``data`` list without normalisation (so existing ``normalize_ohlcv_rows``
     callers continue to work).
 
+    Parameters
+    ----------
+    token:
+        Optional per-request FinMind token. When supplied (e.g. provided by
+        the user from the UI and stored in localStorage), it overrides
+        ``FINMIND_TOKEN`` from the environment.
+
     Raises
     ------
     QuotaExceededError
         On HTTP 402.
     RuntimeError
-        If FINMIND_TOKEN is not configured.
+        If no FinMind token is available.
     """
-    settings = get_settings()
-    if not settings.FINMIND_TOKEN:
+    finmind_token = token or get_settings().FINMIND_TOKEN
+    if not finmind_token:
         raise RuntimeError("FINMIND_TOKEN is required")
 
     await _rate_limiter.wait()
 
-    headers = {"Authorization": f"Bearer {settings.FINMIND_TOKEN}"}
+    headers = {"Authorization": f"Bearer {finmind_token}"}
     params: dict[str, Any] = {
         "dataset": dataset,
         "data_id": data_id,

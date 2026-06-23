@@ -1,9 +1,17 @@
 import axios from 'axios'
+import { getFinMindToken } from '../utils/finmindToken'
 
 export const apiClient = axios.create({
   baseURL: '/api',
   timeout: 30_000,
   headers: { 'Content-Type': 'application/json' },
+})
+
+// Attach the user's FinMind token (from localStorage) to every request.
+apiClient.interceptors.request.use(config => {
+  const token = getFinMindToken()
+  if (token) config.headers.set('X-FinMind-Token', token)
+  return config
 })
 
 apiClient.interceptors.response.use(

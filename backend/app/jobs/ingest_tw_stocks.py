@@ -12,10 +12,11 @@ from app.jobs.common import (
 )
 from app.services.finmind_client import fetch_finmind
 from app.services.http_utils import QuotaExceededError, with_retries
+from app.services.yfinance_client import fetch_yfinance_history
 
 
-async def ingest_tw_stocks(db: AsyncSession, trigger: str = "manual") -> dict:
-    run = await create_source_run(db, "tw_finmind", trigger)
+async def ingest_tw_stocks(db: AsyncSession, trigger: str = "manual", finmind_token: str | None = None) -> dict:
+    run = await create_source_run(db, "tw_multi_source", trigger)
     instruments = await get_instruments_by_market(db, "TW")
     total_rows = success = fail = 0
     try:
@@ -23,10 +24,25 @@ async def ingest_tw_stocks(db: AsyncSession, trigger: str = "manual") -> dict:
             last_date = await get_last_trade_date(db, instrument.id)
             start_date = (last_date + timedelta(days=1)) if last_date else (date.today() - timedelta(days=365))
             try:
-                rows = await with_retries(
-                    lambda: fetch_finmind("TaiwanStockPrice", instrument.ticker, start_date, date.today())
-                )
-                inserted = await upsert_equity_prices(db, instrument.id, "finmind", normalize_ohlcv_rows(rows))
+                rows = []
+                source = "finmind"
+                try:
+                    rows = await with_retries(
+                        lambda: fetch_finmind("TaiwanStockPrice", instrument.ticker, start_date, date.today(), token=finmind_token)
+                    )
+                except QuotaExceededError:
+                    raise
+                except Exception:
+                    rows = []
+                if not rows:
+                    # FinMind needs a token / can be rate-limited; yfinance
+                    # handles both .TW (TWSE) and .TWO (TPEx) tickers directly.
+                    rows = await fetch_yfinance_history(instrument.ticker, start_date, date.today())
+                    source = "yfinance"
+                if not rows:
+                    fail += 1
+                    continue
+                inserted = await upsert_equity_prices(db, instrument.id, source, normalize_ohlcv_rows(rows))
                 total_rows += inserted
                 success += 1
             except QuotaExceededError:
@@ -34,11 +50,11 @@ async def ingest_tw_stocks(db: AsyncSession, trigger: str = "manual") -> dict:
                 return {"status": "quota_exceeded", "row_count": total_rows}
             except Exception as exc:  # noqa: BLE001
                 fail += 1
-                run.progress = {"current_source": "tw_finmind", "current_ticker": instrument.ticker, "index": index}
+                run.progress = {"current_source": "tw_multi_source", "current_ticker": instrument.ticker, "index": index}
                 run.error_msg = str(exc)
                 await db.commit()
         status = "success" if fail == 0 else "partial"
-        await finish_source_run(db, run, status, total_rows, success, fail, progress={"current_source": "tw_finmind"})
+        await finish_source_run(db, run, status, total_rows, success, fail, progress={"current_source": "tw_multi_source"})
         return {"status": status, "row_count": total_rows, "success_count": success, "fail_count": fail}
     except Exception as exc:  # noqa: BLE001
         await finish_source_run(db, run, "fail", total_rows, success, fail + 1, str(exc))

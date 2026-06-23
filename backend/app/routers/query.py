@@ -79,10 +79,12 @@ async def stock_table(
     sort_column = getattr(Instrument, sort_by, Instrument.ticker)
     if sort_by == "change_pct":
         sort_column = TrendMetric.change_pct
+    # Keep rows that still lack price/metric data at the bottom regardless of
+    # sort direction, so populated instruments surface first.
     if sort_order == "desc":
-        stmt = stmt.order_by(desc(sort_column))
+        stmt = stmt.order_by(desc(sort_column).nulls_last())
     else:
-        stmt = stmt.order_by(sort_column)
+        stmt = stmt.order_by(sort_column.nulls_last())
     total = await db.scalar(select(func.count()).select_from(stmt.subquery())) or 0
     rows = (await db.execute(stmt.offset((page - 1) * page_size).limit(page_size))).all()
     data = [

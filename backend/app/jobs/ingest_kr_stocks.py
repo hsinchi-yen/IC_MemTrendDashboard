@@ -18,11 +18,17 @@ async def ingest_kr_stocks(db: AsyncSession, trigger: str = "manual") -> dict:
     for instrument in instruments:
         last_date = await get_last_trade_date(db, instrument.id)
         start_date = (last_date + timedelta(days=1)) if last_date else (date.today() - timedelta(days=365))
-        rows = await fetch_yfinance_history(instrument.ticker, start_date, date.today())
+        try:
+            rows = await fetch_yfinance_history(instrument.ticker, start_date, date.today())
+        except Exception:
+            rows = []
         source = "yfinance"
         if not rows:
-            rows = await fetch_stooq_csv(_kr_stooq_symbol(instrument.ticker))
-            source = "stooq"
+            try:
+                rows = await fetch_stooq_csv(_kr_stooq_symbol(instrument.ticker))
+                source = "stooq"
+            except Exception:
+                rows = []
         if not rows:
             fail += 1
             continue

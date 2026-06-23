@@ -4,6 +4,7 @@ import { useTriggerRefresh } from '../../api/hooks/useRefresh'
 import { PERIODS, usePeriod, type Period } from '../../context/PeriodContext'
 import { formatPct, scoreToColor, scoreToStatus } from '../../utils/colorUtils'
 import { demoIndicators, demoScore } from '../../data/demo'
+import { FinMindSettings } from '../Settings/FinMindSettings'
 
 function PeriodButton({ period, active, onClick }: { period: Period; active: boolean; onClick: (period: Period) => void }) {
   return (
@@ -40,6 +41,7 @@ export function TopBar() {
           {PERIODS.map((item) => (
             <PeriodButton key={item} period={item} active={item === period} onClick={setPeriod} />
           ))}
+          <FinMindSettings />
           <button
             type="button"
             className="btn btn--accent"

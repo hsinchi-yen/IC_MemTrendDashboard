@@ -37,6 +37,8 @@ export const demoIndicators = {
 export const demoQuoteRows = [
   { id: 'DDR5-4800', label: 'DDR5-4800', label_en: 'DDR5-4800', category: 'DRAM' as const, definition: 'DDR5 spot price', changes: { '1D': 0.5, '1W': 4.2, '1M': 12.1, '3M': 18.4, '6M': 23.6, '1Y': 31.2 } },
   { id: 'DDR4-3200', label: 'DDR4-3200', label_en: 'DDR4-3200', category: 'DRAM' as const, definition: 'DDR4 spot price', changes: { '1D': -0.1, '1W': 1.0, '1M': 3.2, '3M': 6.1, '6M': 9.7, '1Y': 14.2 } },
+  { id: 'DDR3-1600', label: 'DDR3-1600', label_en: 'DDR3-1600', category: 'DRAM' as const, definition: 'DDR3 spot price', changes: { '1D': 1.1, '1W': 2.4, '1M': 5.8, '3M': 9.3, '6M': 11.0, '1Y': 7.5 } },
+  { id: 'DDR2-800', label: 'DDR2-800', label_en: 'DDR2-800', category: 'DRAM' as const, definition: 'DDR2 spot price', changes: { '1D': 0.0, '1W': 0.3, '1M': 1.2, '3M': 2.0, '6M': 3.4, '1Y': 4.1 } },
   { id: 'NAND-TLC-WAFER', label: 'NAND TLC wafer', label_en: 'NAND TLC wafer', category: 'NAND' as const, definition: 'NAND wafer spot price', changes: { '1D': -0.2, '1W': -1.4, '1M': -3.1, '3M': 2.2, '6M': 8.3, '1Y': 12.8 } },
 ]
 
