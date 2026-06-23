@@ -42,10 +42,31 @@ export const demoQuoteRows = [
   { id: 'NAND-TLC-WAFER', label: 'NAND TLC wafer', label_en: 'NAND TLC wafer', category: 'NAND' as const, definition: 'NAND wafer spot price', changes: { '1D': -0.2, '1W': -1.4, '1M': -3.1, '3M': 2.2, '6M': 8.3, '1Y': 12.8 } },
 ]
 
+const ma = (s: 'above' | 'below' = 'above') => ({ ma20_state: s, ma60_state: s, ma120_state: s, ma240_state: s })
+const mkRow = (ticker: string, name: string, market: Market, tier: 'A' | 'B' | 'C', price: number, currency: string, c1m: number, mom: number) => ({
+  ticker, name, market, tier, price, currency,
+  changes: { '1D': +(c1m / 10).toFixed(1), '1W': +(c1m / 3).toFixed(1), '1M': c1m, '3M': +(c1m * 1.6).toFixed(1), '6M': +(c1m * 2.1).toFixed(1), '1Y': +(c1m * 2.8).toFixed(1) },
+  ...ma(c1m >= 0 ? 'above' : 'below'),
+  momentum: mom,
+  trend_badge: (mom > 55 ? 'bull' : mom < 45 ? 'bear' : 'neutral') as 'bull' | 'bear' | 'neutral',
+  trend_label: mom > 55 ? '趨勢轉強' : mom < 45 ? '轉弱' : '盤整',
+})
+
+// Representative offline fallback covering all four markets (real data from
+// the API replaces this once the backend is connected).
 export const demoStockRows = [
-  { ticker: 'MU', name: 'Micron', market: '美股' as Market, tier: 'A' as const, price: 125.36, currency: 'USD', changes: { '1D': 2.1, '1W': 5.2, '1M': 12.4, '3M': 28.7, '6M': 41.3, '1Y': 58.4 }, ma20_state: 'above' as const, ma60_state: 'above' as const, ma120_state: 'above' as const, ma240_state: 'above' as const, momentum: 74.2, trend_badge: 'bull' as const, trend_label: '月線上升・趨勢轉強' },
-  { ticker: '2408', name: '南亞科', market: '台股(核心)' as Market, tier: 'A' as const, price: 52.4, currency: 'TWD', changes: { '1D': 1.0, '1W': 2.8, '1M': 9.3, '3M': 18.2, '6M': 26.7, '1Y': 34.1 }, ma20_state: 'above' as const, ma60_state: 'above' as const, ma120_state: 'above' as const, ma240_state: 'below' as const, momentum: 61.3, trend_badge: 'bull' as const, trend_label: '週線上升' },
-  { ticker: '005930.KS', name: 'Samsung', market: '韓股' as Market, tier: 'A' as const, price: 84500, currency: 'KRW', changes: { '1D': -0.7, '1W': -2.2, '1M': -1.9, '3M': 6.1, '6M': 12.8, '1Y': 17.6 }, ma20_state: 'below' as const, ma60_state: 'above' as const, ma120_state: 'above' as const, ma240_state: 'above' as const, momentum: 42.8, trend_badge: 'neutral' as const, trend_label: '年線盤整' },
+  mkRow('MU', 'Micron', '美股', 'A', 125.36, 'USD', 12.4, 74.2),
+  mkRow('SNDK', 'Sandisk', '美股', 'A', 64.2, 'USD', 8.1, 63.0),
+  mkRow('WDC', 'Western Digital', '美股', 'C', 71.5, 'USD', 4.2, 52.0),
+  mkRow('285A.T', 'Kioxia', '日股', 'A', 108700, 'JPY', 9.4, 66.0),
+  mkRow('6857.T', 'Advantest', '日股', 'B', 32170, 'JPY', 6.8, 58.0),
+  mkRow('8035.T', 'Tokyo Electron', '日股', 'C', 41250, 'JPY', 3.1, 49.0),
+  mkRow('005930.KS', 'Samsung', '韓股', 'A', 84500, 'KRW', -1.9, 42.8),
+  mkRow('000660.KS', 'SK hynix', '韓股', 'A', 291900, 'KRW', 7.6, 60.5),
+  mkRow('2408.TW', '南亞科', '台股', 'A', 52.4, 'TWD', 9.3, 61.3),
+  mkRow('2344.TW', '華邦電', '台股', 'A', 28.6, 'TWD', 14.7, 70.0),
+  mkRow('2337.TW', '旺宏', '台股', 'A', 31.2, 'TWD', 5.5, 55.0),
+  mkRow('8299.TWO', '群聯', '台股', 'A', 612, 'TWD', 6.2, 57.0),
 ]
 
 export const demoPeriods: Period[] = ['1D', '1W', '1M', '3M', '6M', '1Y']

@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import apiClient from '../apiClient'
 import type { Period } from '../../context/PeriodContext'
 
-export type Market = '全部' | '美股' | '韓股' | '台股(核心)' | '台股(觀察)'
+export type Market = '全部' | '美股' | '日股' | '韓股' | '台股'
 export type MAState = 'above' | 'below' | null
 
 export interface StockRow {
@@ -25,14 +25,16 @@ export interface StockRow {
 function marketToApiMarket(market: Market): string | undefined {
   if (market === '全部') return undefined
   if (market === '美股') return 'US'
+  if (market === '日股') return 'JP'
   if (market === '韓股') return 'KR'
   return 'TW'
 }
 
 function apiMarketToUiMarket(market: string): Market {
   if (market === 'US') return '美股'
+  if (market === 'JP') return '日股'
   if (market === 'KR') return '韓股'
-  if (market === 'TW') return '台股(核心)'
+  if (market === 'TW') return '台股'
   return '全部'
 }
 
@@ -41,7 +43,7 @@ export const useStockTable = (period: Period, market: Market = '全部') =>
     queryKey: ['stock-table', period, market],
     queryFn: async () => {
       const { data } = await apiClient.get<{ total_count: number; data: Array<Record<string, unknown>> }>('/query/stock_table', {
-        params: { period, market: marketToApiMarket(market) },
+        params: { period, market: marketToApiMarket(market), page_size: 500 },
       })
       return (data.data ?? []).map((row) => ({
         ticker: String(row.ticker ?? ''),

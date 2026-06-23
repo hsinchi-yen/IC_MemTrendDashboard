@@ -5,7 +5,7 @@ import { demoStockRows } from '../../data/demo'
 import type { Period } from '../../context/PeriodContext'
 import { formatPct, formatPrice } from '../../utils/colorUtils'
 
-const markets: Market[] = ['全部', '美股', '韓股', '台股(核心)', '台股(觀察)']
+const markets: Market[] = ['全部', '美股', '日股', '韓股', '台股']
 const periods: Period[] = ['1D', '1W', '1M', '3M', '6M', '1Y']
 
 export function StockTable({ period }: { period: Period }) {
@@ -28,7 +28,7 @@ export function StockTable({ period }: { period: Period }) {
         <div>
           <div className="text-xs text-secondary">Stock Table</div>
           <h3>股票追蹤表</h3>
-          <div className="text-xs text-muted">目前期間：{period}</div>
+          <div className="text-xs text-muted">目前期間：{period}・共 {sorted.length} 檔{query.data ? '' : '（示範資料）'}</div>
         </div>
         <div className="flex gap-2" style={{ flexWrap: 'wrap' }}>
           {markets.map((item) => (
