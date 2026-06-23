@@ -1,0 +1,162 @@
+/* ============================================
+   IC MemTrendDashboard — Micro Animations
+   ============================================ */
+
+/* ── Fade in from below ─────────────────────── */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+.animate-fade-in-up {
+  animation: fade-in-up var(--transition-base) var(--ease-out-cubic) both;
+}
+
+/* ── Fade in from above ─────────────────────── */
+@keyframes fade-in-down {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+.animate-fade-in-down {
+  animation: fade-in-down var(--transition-base) var(--ease-out-cubic) both;
+}
+
+/* ── Simple fade ────────────────────────────── */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.animate-fade-in {
+  animation: fade-in var(--transition-base) ease both;
+}
+
+/* ── Scale in ───────────────────────────────── */
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1);    }
+}
+.animate-scale-in {
+  animation: scale-in var(--transition-base) var(--ease-spring) both;
+}
+
+/* ── Staggered widget entry ─────────────────── */
+.widget-enter {
+  animation: fade-in-up 400ms var(--ease-out-cubic) both;
+}
+.widget-enter:nth-child(1)  { animation-delay:   0ms; }
+.widget-enter:nth-child(2)  { animation-delay:  50ms; }
+.widget-enter:nth-child(3)  { animation-delay: 100ms; }
+.widget-enter:nth-child(4)  { animation-delay: 150ms; }
+.widget-enter:nth-child(5)  { animation-delay: 200ms; }
+.widget-enter:nth-child(6)  { animation-delay: 250ms; }
+.widget-enter:nth-child(7)  { animation-delay: 300ms; }
+.widget-enter:nth-child(8)  { animation-delay: 350ms; }
+
+/* ── Bull / Bear glow pulse ─────────────────── */
+@keyframes pulse-glow-bull {
+  0%, 100% { box-shadow: 0 0 8px  var(--color-bull); }
+  50%       { box-shadow: 0 0 32px var(--color-bull),
+                          0 0 64px var(--color-bull); }
+}
+@keyframes pulse-glow-bear {
+  0%, 100% { box-shadow: 0 0 8px  var(--color-bear); }
+  50%       { box-shadow: 0 0 32px var(--color-bear),
+                          0 0 64px var(--color-bear); }
+}
+@keyframes pulse-glow-accent {
+  0%, 100% { box-shadow: 0 0 8px  var(--color-accent); }
+  50%       { box-shadow: 0 0 28px var(--color-accent),
+                          0 0 56px var(--color-accent-glow); }
+}
+.glow-bull   { animation: pulse-glow-bull   2s ease-in-out infinite; }
+.glow-bear   { animation: pulse-glow-bear   2s ease-in-out infinite; }
+.glow-accent { animation: pulse-glow-accent 2.5s ease-in-out infinite; }
+
+/* ── Value flash on data update ─────────────── */
+@keyframes value-flash {
+  0%   { opacity: 1; background: transparent; }
+  30%  { opacity: 0.5; background: rgba(255, 255, 255, 0.06); border-radius: 3px; }
+  100% { opacity: 1; background: transparent; }
+}
+.value-updated {
+  animation: value-flash 500ms ease;
+}
+
+/* ── Positive value flash ───────────────────── */
+@keyframes value-flash-bull {
+  0%   { color: inherit; }
+  25%  { color: var(--color-bull); }
+  100% { color: inherit; }
+}
+.value-flash-bull { animation: value-flash-bull 600ms ease; }
+
+/* ── Negative value flash ───────────────────── */
+@keyframes value-flash-bear {
+  0%   { color: inherit; }
+  25%  { color: var(--color-bear); }
+  100% { color: inherit; }
+}
+.value-flash-bear { animation: value-flash-bear 600ms ease; }
+
+/* ── Skeleton shimmer loader ────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0;  }
+}
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-secondary)     25%,
+    var(--bg-tertiary)      50%,
+    var(--bg-secondary)     75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.6s infinite linear;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Spinning loader ────────────────────────── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.animate-spin {
+  animation: spin 800ms linear infinite;
+}
+
+/* ── Tooltip appear ─────────────────────────── */
+@keyframes tooltip-in {
+  from { opacity: 0; transform: translateY(-4px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+.tooltip-enter {
+  animation: tooltip-in 200ms var(--ease-out-cubic);
+}
+
+/* ── Bottom sheet slide up ──────────────────── */
+@keyframes slide-up {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.animate-slide-up {
+  animation: slide-up var(--transition-slow) var(--ease-out-cubic) both;
+}
+
+/* ── Soft bounce ────────────────────────────── */
+@keyframes bounce-soft {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-4px); }
+}
+.animate-bounce-soft {
+  animation: bounce-soft 1.4s ease-in-out infinite;
+}
+
+/* ── Respect reduced motion ─────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration:        0.01ms !important;
+    animation-iteration-count: 1      !important;
+    transition-duration:       0.01ms !important;
+    scroll-behavior:           auto   !important;
+  }
+}

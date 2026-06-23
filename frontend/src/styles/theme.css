@@ -1,0 +1,398 @@
+/* ============================================
+   IC MemTrendDashboard — Design Token Layer
+   Dark Glassmorphism Theme
+   ============================================ */
+
+:root {
+  /* ── Background ── */
+  --bg-primary:   #0a0e1a;   /* deep navy — page background */
+  --bg-secondary: #111827;   /* card / surface background   */
+  --bg-tertiary:  #1a2235;   /* elevated surface            */
+  --bg-overlay:   rgba(10, 14, 26, 0.85);
+
+  /* ── Glass Surface ── */
+  --bg-glass:          rgba(255, 255, 255, 0.04);
+  --bg-glass-hover:    rgba(255, 255, 255, 0.07);
+  --bg-glass-active:   rgba(255, 255, 255, 0.10);
+  --border-glass:      rgba(255, 255, 255, 0.08);
+  --border-glass-strong: rgba(255, 255, 255, 0.14);
+
+  /* ── Market Signal Colors ── */
+  --color-bull:         #00e676;   /* bright green — gains / bullish  */
+  --color-bull-dim:     rgba(0, 230, 118, 0.18);
+  --color-bear:         #ff1744;   /* bright red   — losses / bearish */
+  --color-bear-dim:     rgba(255, 23, 68, 0.18);
+  --color-neutral:      #90a4ae;   /* grey-blue    — flat / neutral   */
+  --color-neutral-dim:  rgba(144, 164, 174, 0.15);
+
+  /* ── Accent ── */
+  --color-accent:       #7c3aed;   /* purple neon                    */
+  --color-accent-light: #a78bfa;   /* lighter variant for text       */
+  --color-accent-glow:  rgba(124, 58, 237, 0.30);
+  --color-accent-dim:   rgba(124, 58, 237, 0.15);
+
+  /* ── Secondary Accents ── */
+  --color-cyan:         #00bcd4;
+  --color-cyan-glow:    rgba(0, 188, 212, 0.25);
+  --color-amber:        #ffa726;
+  --color-amber-glow:   rgba(255, 167, 38, 0.25);
+
+  /* ── Text ── */
+  --text-primary:   #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted:     #475569;
+  --text-disabled:  #334155;
+  --text-inverse:   #0a0e1a;
+
+  /* ── Border ── */
+  --border-subtle:  rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.10);
+  --border-strong:  rgba(255, 255, 255, 0.18);
+
+  /* ── Radius ── */
+  --radius-xs:  4px;
+  --radius-sm:  8px;
+  --radius-md:  12px;
+  --radius-lg:  16px;
+  --radius-xl:  24px;
+  --radius-pill: 9999px;
+
+  /* ── Shadows ── */
+  --shadow-sm:  0 1px 3px rgba(0, 0, 0, 0.4),
+                0 1px 2px rgba(0, 0, 0, 0.24);
+  --shadow-md:  0 4px 16px rgba(0, 0, 0, 0.5),
+                0 2px 6px rgba(0, 0, 0, 0.3);
+  --shadow-lg:  0 12px 40px rgba(0, 0, 0, 0.6),
+                0 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-accent: 0 4px 24px var(--color-accent-glow);
+  --shadow-bull:   0 4px 24px rgba(0, 230, 118, 0.25);
+  --shadow-bear:   0 4px 24px rgba(255, 23, 68, 0.25);
+
+  /* ── Spacing scale ── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* ── Typography ── */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+
+  --text-xs:   0.6875rem;  /* 11px */
+  --text-sm:   0.75rem;    /* 12px */
+  --text-base: 0.875rem;   /* 14px */
+  --text-md:   1rem;       /* 16px */
+  --text-lg:   1.125rem;   /* 18px */
+  --text-xl:   1.25rem;    /* 20px */
+  --text-2xl:  1.5rem;     /* 24px */
+  --text-3xl:  1.875rem;   /* 30px */
+  --text-4xl:  2.25rem;    /* 36px */
+
+  --font-light:   300;
+  --font-regular: 400;
+  --font-medium:  500;
+  --font-semi:    600;
+  --font-bold:    700;
+
+  --leading-tight:  1.25;
+  --leading-snug:   1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed:1.625;
+
+  /* ── Transitions ── */
+  --transition-fast:   150ms;
+  --transition-base:   250ms;
+  --transition-slow:   400ms;
+  --ease-out-cubic:    cubic-bezier(0.33, 1, 0.68, 1);
+  --ease-in-out-cubic: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring:       cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ── Z-index layers ── */
+  --z-base:    0;
+  --z-raised:  10;
+  --z-dropdown:200;
+  --z-sticky:  300;
+  --z-modal:   400;
+  --z-toast:   500;
+  --z-tooltip: 600;
+
+  /* ── Bottom nav height ── */
+  --bottom-nav-height: 64px;
+}
+
+/* ============================================
+   Glass Card Component
+   ============================================ */
+.glass-card {
+  background:     var(--bg-glass);
+  border:         1px solid var(--border-glass);
+  border-radius:  var(--radius-lg);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  box-shadow:     var(--shadow-md);
+  transition:
+    border-color var(--transition-base) var(--ease-out-cubic),
+    box-shadow   var(--transition-base) var(--ease-out-cubic),
+    background   var(--transition-base) var(--ease-out-cubic);
+}
+
+.glass-card:hover {
+  background:    var(--bg-glass-hover);
+  border-color:  var(--border-glass-strong);
+  box-shadow:    var(--shadow-lg);
+}
+
+.glass-card--accent {
+  border-color: rgba(124, 58, 237, 0.30);
+  box-shadow:   var(--shadow-md), var(--shadow-accent);
+}
+
+.glass-card--bull {
+  border-color: rgba(0, 230, 118, 0.25);
+  box-shadow:   var(--shadow-md), var(--shadow-bull);
+}
+
+.glass-card--bear {
+  border-color: rgba(255, 23, 68, 0.25);
+  box-shadow:   var(--shadow-md), var(--shadow-bear);
+}
+
+/* ============================================
+   Scrollbar — dark themed
+   ============================================ */
+::-webkit-scrollbar {
+  width:  6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background:    var(--border-default);
+  border-radius: var(--radius-pill);
+  transition:    background var(--transition-fast);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-default) transparent;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN — Mobile / Tablet
+   ============================================ */
+
+/* Tablet & Medium devices */
+@media (max-width: 1024px) {
+  :root {
+    --text-3xl: 1.5rem;  /* reduce heading size */
+    --text-lg:  1rem;
+  }
+
+  .glass-card {
+    padding: 12px !important;
+  }
+}
+
+/* Mobile devices (< 768px) */
+@media (max-width: 768px) {
+  :root {
+    --text-3xl:    1.25rem;
+    --text-2xl:    1.25rem;
+    --text-lg:     0.875rem;
+    --text-base:   0.75rem;
+    --space-4:     12px;
+    --space-6:     16px;
+  }
+
+  html {
+    font-size: 14px;
+  }
+
+  body {
+    font-size: var(--text-sm);
+  }
+
+  /* ── Main layout ── */
+  .app-container {
+    padding-bottom: var(--bottom-nav-height);
+  }
+
+  /* ── Dashboard grid: collapse to single column ── */
+  .dashboard-grid,
+  [style*="grid"]:not(.data-table) {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Hide desktop top nav, show mobile bottom nav ── */
+  .top-nav {
+    display: none !important;
+  }
+
+  .bottom-nav {
+    display: flex !important;
+  }
+
+  /* ── Compact cards ── */
+  .glass-card {
+    padding: 8px !important;
+    margin-bottom: 8px;
+  }
+
+  .glass-card h3 {
+    font-size: var(--text-lg);
+    margin-bottom: 4px;
+  }
+
+  /* ── Table: horizontal scroll with scroll-snap ── */
+  table {
+    display: block;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  /* ── Stock table rows as cards ── */
+  .stock-table-row,
+  [role="row"] {
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    margin-bottom: 8px;
+    scroll-snap-align: start;
+  }
+
+  /* ── Charts: reduce height, font-size ── */
+  .echarts-container,
+  [style*="echarts"],
+  .lightweight-charts-container {
+    height: 200px !important;
+    font-size: 10px;
+  }
+
+  /* ── Flex stacking on mobile ── */
+  .flex {
+    flex-direction: column;
+  }
+
+  .flex-row {
+    flex-direction: row;
+  }
+
+  .justify-between {
+    justify-content: space-between;
+  }
+
+  /* ── Spacing compression ── */
+  .gap-3 { gap: 6px; }
+  .gap-4 { gap: 8px; }
+  .gap-6 { gap: 12px; }
+
+  /* ── Text compression ── */
+  .text-2xl { font-size: 1rem; }
+  .text-lg  { font-size: 0.875rem; }
+  .text-md  { font-size: 0.75rem; }
+  .text-sm  { font-size: 0.65rem; }
+
+  /* ── Tooltips: smaller on mobile ── */
+  [role="tooltip"],
+  .tooltip {
+    font-size: 10px;
+    max-width: 150px;
+  }
+
+  /* ── Input sizing ── */
+  input, select, textarea {
+    min-width: 100% !important;
+    padding: 8px 4px;
+  }
+
+  /* ── Button sizing ── */
+  button {
+    min-height: 36px;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  /* ── Reduce animations on smaller devices ── */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+}
+
+/* Small mobile (< 480px) */
+@media (max-width: 480px) {
+  :root {
+    --text-2xl: 1rem;
+    --text-lg:  0.75rem;
+    --space-4:  8px;
+  }
+
+  .glass-card {
+    padding: 6px !important;
+  }
+
+  .glass-card h3 {
+    font-size: 0.875rem;
+  }
+
+  .echarts-container,
+  [style*="echarts"],
+  .lightweight-charts-container {
+    height: 150px !important;
+  }
+
+  /* ── Accordion: full width on tiny screens ── */
+  .accordion {
+    width: 100%;
+  }
+
+  /* ── Hide non-critical info ── */
+  .text-muted {
+    display: none;
+  }
+}
+
+/* Landscape orientation (height < 600px) */
+@media (orientation: landscape) and (max-height: 600px) {
+  .app-container {
+    padding-bottom: 0;
+  }
+
+  .top-nav {
+    height: 40px;
+    padding: 4px 8px;
+  }
+
+  .echarts-container,
+  .lightweight-charts-container {
+    height: 120px !important;
+  }
+}
